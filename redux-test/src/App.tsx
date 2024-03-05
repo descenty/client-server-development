@@ -1,7 +1,7 @@
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import "./App.css";
 import AppHeader from "./components/appHeader";
-import AppFooter from "./components/appFooter";
+import TermsOfUse from "./components/termsOfUse";
 
 function App() {
   return (
@@ -9,23 +9,26 @@ function App() {
       <AppHeader />
       <div className="w-[100vw] h-[100vh] flex flex-col items-center px-12 py-6 gap-12">
         <div className="flex flex-col justify-center items-center gap-12">
-          {[...Array(10)].map(() => (
-            <Card className="w-full max-w-[500px] px-6 py-4">
+          {[...Array(10)].map((value, index) => (
+            <Card key={index} className="w-full max-w-[500px] px-6 py-4">
               <CardHeader className="text-xl">Lorem ipsum dolor sit amet.</CardHeader>
               <CardBody>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint deleniti dicta ea nam, unde, animi minus
-                dolores sed esse ab voluptates architecto quisquam. Ab amet sequi fugiat nobis. Dolorum in aperiam
-                accusamus maiores, inventore, nesciunt amet non ab rem consequatur distinctio esse totam animi velit
-                magnam sapiente optio temporibus aspernatur at quod labore cum. Itaque accusantium asperiores nihil
-                nobis, quam corrupti nulla culpa, accusamus at eius magnam in quibusdam! Tenetur non, fugiat mollitia
-                soluta voluptate dolore ratione beatae deserunt ea quisquam quo nam impedit omnis recusandae inventore
-                saepe architecto officia vel sequi doloribus assumenda animi nobis ipsum. Similique, nam inventore.
+                <p className="tracking-wide text-base text-gray-400">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt neque nostrum voluptates voluptate.
+                  Dignissimos unde temporibus numquam iste quidem earum tempora inventore recusandae sunt voluptatem quo
+                  corporis aut et sint, sequi nesciunt consectetur. Facere dolorum, ut impedit earum tempore quibusdam
+                  rem libero accusantium minus doloremque cupiditate quaerat! Necessitatibus est facere alias
+                  dignissimos perspiciatis odit aut, impedit fugiat aperiam asperiores laborum reiciendis, saepe
+                  mollitia corporis enim veritatis excepturi modi officiis eligendi accusantium explicabo qui placeat
+                  velit? Odio eveniet fugit saepe, ipsum sint vitae dolorum porro dignissimos unde, voluptas, voluptatem
+                  beatae cum doloribus quaerat officiis. Esse quia, iste quisquam fugiat hic id.
+                </p>
               </CardBody>
             </Card>
           ))}
         </div>
       </div>
-      <AppFooter />
+      <TermsOfUse />
     </>
   );
 }
