@@ -1,17 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialUserAgree = () => {
+  const userAgree = localStorage.getItem("user_agree");
+  if (userAgree) return JSON.parse(userAgree);
+  return false;
+};
+
 export const termsOfUseSlice = createSlice({
   name: "termsOfUse",
   initialState: {
-    isOpen: true,
+    userAgree: initialUserAgree(),
   },
   reducers: {
-    setOpened: (state, action) => {
-      state.isOpen = action.payload;
+    setUserAgree: (state, action) => {
+      state.userAgree = action.payload;
+      localStorage.setItem("user_agree", action.payload.toString());
     },
   },
 });
 
-export const { setOpened } = termsOfUseSlice.actions;
+export const { setUserAgree } = termsOfUseSlice.actions;
 
 export default termsOfUseSlice.reducer;

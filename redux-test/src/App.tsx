@@ -2,14 +2,32 @@ import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import "./App.css";
 import AppHeader from "./components/appHeader";
 import TermsOfUse from "./components/termsOfUse";
+import { useAuth } from "react-oidc-context";
+import { useEffect } from "react";
+import { useAppDispatch } from "./stores/hooks";
+import { setUser } from "./stores/userSlice";
+import { extractRoles } from "./utils";
 
 function App() {
+  const auth = useAuth();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (auth.isAuthenticated && auth.user) {
+      const user = { ...auth.user, roles: extractRoles(auth.user.access_token) };
+      // @ts-expect-error missing properties, why?
+      dispatch(setUser(user));
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      dispatch(setUser(null));
+      localStorage.removeItem("user");
+    }
+  }, [auth, dispatch]);
   return (
     <>
       <AppHeader />
       <div className="w-[100vw] h-[100vh] flex flex-col items-center px-12 py-6 gap-12">
         <div className="flex flex-col justify-center items-center gap-12">
-          {[...Array(10)].map((value, index) => (
+          {[...Array(10)].map((_, index) => (
             <Card key={index} className="w-full max-w-[500px] px-6 py-4">
               <CardHeader className="text-xl">Lorem ipsum dolor sit amet.</CardHeader>
               <CardBody>

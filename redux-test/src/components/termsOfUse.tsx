@@ -10,15 +10,15 @@ import {
 } from "@nextui-org/react";
 import { useAppDispatch, useAppSelector } from "../stores/hooks";
 import { useState } from "react";
-import { setOpened } from "../stores/termsOfUseSlice";
+import { setUserAgree } from "../stores/termsOfUseSlice";
 
 const TermsOfUse = () => {
-  const isOpen = useAppSelector((state) => state.termsOfUse.isOpen);
+  const isOpen = useAppSelector((state) => !state.termsOfUse.userAgree);
   const dispatch = useAppDispatch();
   const [agree, setAgree] = useState(false);
   return (
     isOpen && (
-      <Modal hideCloseButton isDismissable={false} isOpen={isOpen} placement="bottom-center">
+      <Modal shouldBlockScroll hideCloseButton isDismissable={false} isOpen={isOpen} placement="bottom-center">
         <ModalContent className="p-2">
           <ModalHeader className="text-xl font-normal tracking-widest uppercase">Terms of use</ModalHeader>
           <ModalBody className="flex flex-col justify-between gap-6 p-6">
@@ -27,7 +27,7 @@ const TermsOfUse = () => {
             </p>
             <Divider />
             <ScrollShadow className="h-64">
-              <p className="tracking-wide text-base text-gray-400 flex flex-col gap-2 pb-4">
+              <div className="tracking-wide text-base text-gray-400 flex flex-col gap-2 pb-4">
                 <h3 className="font-semibold">1. Introduction</h3>
                 <p>
                   This website is operated by Bychenkov A.K. The use of our website is subject to the following terms
@@ -86,7 +86,7 @@ const TermsOfUse = () => {
                   Use of any downloaded software is governed by the terms of the license agreement, if any, which
                   accompanies or is provided with the software.
                 </p>
-              </p>
+              </div>
             </ScrollShadow>
             <div className="flex flex-row justify-between items-center">
               <Checkbox
@@ -98,7 +98,7 @@ const TermsOfUse = () => {
               </Checkbox>
               <Button
                 isDisabled={!agree}
-                onClick={() => dispatch(setOpened(false))}
+                onClick={() => dispatch(setUserAgree(true))}
                 color="primary"
                 radius="sm"
                 className="px-6 self-end w-32 flex-shrink-0 text-gray-300 uppercase tracking-widest font-semibold"
