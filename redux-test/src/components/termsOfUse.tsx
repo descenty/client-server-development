@@ -9,20 +9,35 @@ import {
   ScrollShadow,
 } from "@nextui-org/react";
 import { useAppDispatch, useAppSelector } from "../stores/hooks";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { setUserAgree } from "../stores/termsOfUseSlice";
 
 const TermsOfUse = () => {
   const isOpen = useAppSelector((state) => !state.termsOfUse.userAgree);
   const dispatch = useAppDispatch();
   const [agree, setAgree] = useState(false);
+  const handleKeyboardEvent = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") setAgree(!agree);
+    },
+    [agree]
+  );
+  useEffect(() => {
+    setAgree(false);
+  }, [isOpen]);
+  useEffect(() => {
+    isOpen
+      ? document.addEventListener("keydown", handleKeyboardEvent)
+      : document.removeEventListener("keydown", handleKeyboardEvent);
+    return () => document.removeEventListener("keydown", handleKeyboardEvent);
+  }, [handleKeyboardEvent, isOpen]);
   return (
     isOpen && (
       <Modal shouldBlockScroll hideCloseButton isDismissable={false} isOpen={isOpen} placement="bottom-center">
         <ModalContent className="p-2">
           <ModalHeader className="text-xl font-normal tracking-widest uppercase">Terms of use</ModalHeader>
           <ModalBody className="flex flex-col justify-between gap-6 p-6">
-            <p className="text-left text-gray-400 tracking-widest text-base text-[15px] mt-[-28px] mb-[-8px]">
+            <p className="text-left text-gray-400 tracking-wider text-base text-[15px] mt-[-28px] mb-[-8px]">
               Before using the site, please read the user agreement
             </p>
             <Divider />
@@ -91,6 +106,7 @@ const TermsOfUse = () => {
             <div className="flex flex-row justify-between items-center">
               <Checkbox
                 onChange={(e) => setAgree(e.target.checked)}
+                isSelected={agree}
                 classNames={{ label: "text-gray-400 tracking-wide text-[15px]" }}
                 className="text-gray-400"
               >

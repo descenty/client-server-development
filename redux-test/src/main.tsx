@@ -7,15 +7,18 @@ import { Provider } from "react-redux";
 import { store } from "./stores/store.ts";
 import { AuthProvider } from "react-oidc-context";
 import { oidcConfig } from "./auth.ts";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <AuthProvider {...oidcConfig}>
-      <Provider store={store}>
-        <NextUIProvider>
+  <AuthProvider {...oidcConfig}>
+    <Provider store={store}>
+      <NextUIProvider>
+        <BrowserRouter>
           <App />
-        </NextUIProvider>
-      </Provider>
-    </AuthProvider>
+        </BrowserRouter>
+      </NextUIProvider>
+    </Provider>
+  </AuthProvider>
   </React.StrictMode>
 );

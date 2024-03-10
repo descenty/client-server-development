@@ -1,30 +1,10 @@
-import { Navbar, NavbarContent, NavbarItem, Link, Button, Spinner } from "@nextui-org/react";
-import { useCallback } from "react";
-import { useAuth } from "react-oidc-context";
-import { useAppDispatch, useAppSelector } from "../stores/hooks";
+import { Navbar, NavbarContent, NavbarItem, Link } from "@nextui-org/react";
+import { useAppDispatch } from "../stores/hooks";
 import { setUserAgree } from "../stores/termsOfUseSlice";
+import AuthElement from "./authElement";
 
 const AppHeader = () => {
-  const auth = useAuth();
-  const user = useAppSelector((state) => state.user.data);
   const dispatch = useAppDispatch();
-  const AuthElement = useCallback(() => {
-    if (auth.isLoading) return <Spinner />;
-    if (user)
-      return (
-        <>
-          <span>{user.profile.name}</span>
-          <Button variant="flat" color="danger" onClick={() => auth.signoutSilent()}>
-            Sign Out
-          </Button>
-        </>
-      );
-    return (
-      <Button color="primary" onClick={() => auth.signinPopup()}>
-        Sign In
-      </Button>
-    );
-  }, [auth, user]);
   return (
     <Navbar className="px-4 flex flex-row items-center justify-center gap-6 w-[100vw]">
       <Link href="/" className="font-bold text-inherit flex flex-row gap-2 items-center ml-2 mr-16">
@@ -36,26 +16,21 @@ const AppHeader = () => {
             fillRule="evenodd"
           />
         </svg>
-        <span>ACME</span>
+        <span className="text-lg">ACME</span>
       </Link>
-      <NavbarContent className="flex flex-row gap-6">
+      <NavbarContent className="flex flex-row gap-12">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
+          <Link className="text-lg" href="/" color="foreground">
+            Notes
           </Link>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page" onClick={() => dispatch(setUserAgree(false))}>
+          <Link className="text-lg cursor-pointer" aria-current="page" onClick={() => dispatch(setUserAgree(false))}>
             Terms of Use
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem>
       </NavbarContent>
-      <div className="flex flex-row justify-center items-center gap-6 w-64">
+      <div className="flex flex-row justify-center items-center gap-8 w-80">
         <AuthElement />
       </div>
     </Navbar>
