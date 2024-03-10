@@ -12,11 +12,16 @@ const AuthElement = () => {
         <Link color="foreground" href="/users/22" className="text-lg">
           {user.profile.name}
         </Link>
-        <Button className="text-lg" variant="flat" color="danger" onClick={() => auth.signoutSilent()}>
+        <Button size="md" variant="flat" color="danger" onClick={() => auth.signoutSilent()}>
           Sign Out
         </Button>
       </>
     );
+  return (
+    <Button className="text-lg" variant="flat" color="primary" onClick={() => auth.signinPopup()}>
+      Sign In
+    </Button>
+  );
 };
 
 export default AuthElement;
