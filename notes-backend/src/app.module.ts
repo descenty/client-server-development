@@ -3,16 +3,20 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NoteModule } from './note/note.module';
+import { ConfigModule } from '@nestjs/config';
+import { Note } from './note/entities/note.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.POSTGRES_HOST,
       port: 5432,
-      username: 'postgres',
-      password: 'postgres',
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
       database: 'notes',
+      entities: [Note],
       synchronize: true,
     }),
     NoteModule,
@@ -20,4 +24,6 @@ import { NoteModule } from './note/note.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  // constructor(private dataSource: DataSource) {}
+}

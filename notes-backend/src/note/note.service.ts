@@ -1,26 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
+// import { CreateNoteDto } from './dto/create-note.dto';
+// import { UpdateNoteDto } from './dto/update-note.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Note } from './entities/note.entity';
+import { DeleteResult, Repository } from 'typeorm';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class NoteService {
-  create(createNoteDto: CreateNoteDto) {
-    return 'This action adds a new note';
+  constructor(
+    @InjectRepository(Note)
+    private repository: Repository<Note>,
+  ) {}
+  // async create(createNoteDto: CreateNoteDto) {
+  //   return 'This action adds a new note';
+  // }
+
+  async findAll(): Promise<Note[]> {
+    return await this.repository.find();
   }
 
-  findAll() {
-    return `This action returns all note`;
+  async findOne(id: UUID): Promise<Note | null> {
+    return await this.repository.findOneBy({ id });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} note`;
-  }
+  // async update(id: number, updateNoteDto: UpdateNoteDto) {
+  //   return `This action updates a #${id} note`;
+  // }
 
-  update(id: number, updateNoteDto: UpdateNoteDto) {
-    return `This action updates a #${id} note`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+  async delete(id: UUID): Promise<DeleteResult> {
+    return await this.repository.delete(id);
   }
 }
