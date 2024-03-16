@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { NoteModule } from './note/note.module';
 import { ConfigModule } from '@nestjs/config';
 import { Note } from './note/entities/note.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Note } from './note/entities/note.entity';
       synchronize: true,
     }),
     NoteModule,
+    // AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

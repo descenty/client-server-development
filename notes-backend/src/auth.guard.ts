@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import memoize from 'memoizee';
-import jwt from 'jsonwebtoken';
+import * as memoize from 'memoizee';
+import * as jwt from 'jsonwebtoken';
+import { UserDto } from './auth/dto/user.dto';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -16,19 +12,26 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    if (!token) throw new UnauthorizedException();
-    const publicKey = this.getPublicKey();
-    try {
-      const payload = jwt.verify(token, publicKey, {
-        algorithms: ['RS256'],
-        audience: 'account',
-      });
-      request['user'] = payload;
-    } catch {
-      // could not validate credentials
-      throw new UnauthorizedException();
-    }
-    return true;
+    if (!token) return false;
+    return this.getPublicKeyMemo().then((publicKey) => {
+      try {
+        const payload = jwt.verify(token, publicKey, {
+          algorithms: ['RS256'],
+          audience: 'account',
+        }) as jwt.JwtPayload;
+        const user = {
+          id: payload.sub,
+          name: payload.profile.name,
+          email: payload.profile.email,
+          roles: payload.roles,
+        } as UserDto;
+        request['user'] = user;
+        return true;
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
+    });
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
@@ -36,22 +39,16 @@ export class AuthGuard implements CanActivate {
     return type === 'Bearer' ? token : undefined;
   }
 
-  private getPublicKey = memoize(
-    async () =>
-      /*
-        async with AsyncClient() as client:
-        response: Response = await client.get(
-            f"{settings.keycloak.url}/realms/{settings.keycloak.realm}"
-        )
-        if response.status_code == 200:
-            return f"-----BEGIN PUBLIC KEY-----\n{response.json()["public_key"]}\n-----END PUBLIC KEY-----"
-    raise Exception("Could not get public key from Keycloak")*/
-      (
-        await (
-          await fetch(
-            `${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}`,
-          )
-        ).json()
-      ).public_key,
-  );
+  private getPublicKeyMemo = memoize(getPublicKey, { async: true });
 }
+
+const getPublicKey = async () =>
+  `-----BEGIN PUBLIC KEY-----\n${
+    (
+      await (
+        await fetch(
+          `${process.env.KEYCLOAK_URL}/realms/${process.env.KEYCLOAK_REALM}`,
+        )
+      ).json()
+    ).public_key
+  }\n-----END PUBLIC KEY-----`;

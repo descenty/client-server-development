@@ -3,16 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpException,
   HttpCode,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { NoteService } from './note.service';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
 import { UUID } from 'crypto';
+import { AuthGuard } from 'src/auth.guard';
+import { Request } from 'express';
 
 @Controller('notes')
 export class NoteController {
@@ -20,18 +22,19 @@ export class NoteController {
 
   @Post()
   @HttpCode(201)
-  create(@Body() createNoteDto: CreateNoteDto) {
-    return this.noteService.create(createNoteDto);
+  @UseGuards(AuthGuard)
+  async create(@Body() createNoteDto: CreateNoteDto, @Req() request: Request) {
+    return await this.noteService.create(createNoteDto, request['user'].id);
   }
 
   @Get()
-  findAll() {
-    return this.noteService.findAll();
+  async findAll() {
+    return await this.noteService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: UUID) {
-    const note = this.noteService.findOne(id);
+  async findOne(@Param('id') id: UUID) {
+    const note = await this.noteService.findOne(id);
     if (!note) throw new HttpException('Note not found', 404);
     return note;
   }
@@ -43,7 +46,8 @@ export class NoteController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: UUID) {
-    return this.noteService.delete(id);
+  @UseGuards(AuthGuard)
+  async delete(@Param('id') id: UUID, @Req() request: Request) {
+    return await this.noteService.delete(id, request['user']);
   }
 }
