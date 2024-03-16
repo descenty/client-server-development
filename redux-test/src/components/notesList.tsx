@@ -1,9 +1,12 @@
+import { Note } from "../schemas/note";
 import UserNoteShort from "./userNoteShort";
 
-const NotesList = ({ justify }: { justify?: "start" | "center" | "end" } = { justify: "start" }) => (
+const NotesList = (
+  { notes, justify }: { notes: Note[]; justify?: "start" | "center" | "end" } = { notes: [], justify: "start" }
+) => (
   <div className={`flex flex-row flex-wrap gap-6 justify-${justify}`}>
-    {[...Array(10)].map((_, index) => (
-      <UserNoteShort key={index} />
+    {notes.map((note) => (
+      <UserNoteShort key={note.id} note={note} />
     ))}
   </div>
 );

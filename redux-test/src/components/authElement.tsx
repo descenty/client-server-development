@@ -9,7 +9,7 @@ const AuthElement = () => {
   if (user)
     return (
       <>
-        <Link color="foreground" href="/users/22" className="text-lg">
+        <Link color="foreground" href={`/users/${user.profile.sub}`} className="text-lg">
           {user.profile.name}
         </Link>
         <Button size="md" variant="flat" color="danger" onClick={() => auth.signoutSilent()}>

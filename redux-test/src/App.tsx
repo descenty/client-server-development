@@ -9,6 +9,13 @@ import { extractRoles } from "./utils";
 import UserNotesPage from "./pages/userNotesPage";
 import { Route, Routes } from "react-router-dom";
 import UserPage from "./pages/userPage";
+import CreateNoteModal from "./components/createNoteModal";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "./utils/axiosInstance";
+import { NoteCreate } from "./schemas/note";
+import NoteModal from "./components/noteModal";
+import { $modalNote } from "./stores/noteModal.store";
+import UpdateNoteModal from "./components/updateNoteModal";
 
 function App() {
   const auth = useAuth();
@@ -24,6 +31,21 @@ function App() {
       localStorage.removeItem("user");
     }
   }, [auth, dispatch]);
+
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: async (noteCreate: NoteCreate) => (await axiosInstance().post("notes", noteCreate)).data,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+  const updateMutation = useMutation({
+    mutationFn: async (noteCreate: NoteCreate) =>
+      (await axiosInstance().patch(`notes/${$modalNote.getState()?.id}`, noteCreate)).data,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
   return (
     <>
       <AppHeader />
@@ -33,6 +55,9 @@ function App() {
           <Route path="/users/:id" element={<UserPage />} />
         </Routes>
       </div>
+      <NoteModal />
+      <CreateNoteModal saveFunc={createMutation.mutateAsync} />
+      <UpdateNoteModal saveFunc={updateMutation.mutateAsync} />
       <TermsOfUse />
     </>
   );

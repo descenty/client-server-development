@@ -8,7 +8,7 @@ import {
 
 @Entity()
 export class Note {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: UUID;
 
   @Column()

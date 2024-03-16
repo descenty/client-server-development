@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Request } from 'express';
 import * as memoize from 'memoizee';
 import * as jwt from 'jsonwebtoken';
-import { UserDto } from './auth/dto/user.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,14 +21,13 @@ export class AuthGuard implements CanActivate {
         }) as jwt.JwtPayload;
         const user = {
           id: payload.sub,
-          name: payload.profile.name,
-          email: payload.profile.email,
+          name: payload.name,
+          email: payload.email,
           roles: payload.roles,
         } as UserDto;
         request['user'] = user;
         return true;
       } catch (e) {
-        console.log(e);
         return false;
       }
     });
