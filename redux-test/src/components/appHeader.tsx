@@ -30,9 +30,7 @@ const AppHeader = () => {
           </Link>
         </NavbarItem>
       </NavbarContent>
-      <div className="flex flex-row justify-center items-center gap-8 w-80">
-        <AuthElement />
-      </div>
+      <AuthElement />
     </Navbar>
   );
 };

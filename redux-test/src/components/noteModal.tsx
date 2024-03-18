@@ -32,7 +32,7 @@ const NoteModal = () => {
         <ModalContent>
           <ModalHeader className="flex flex-row gap-4">
             <span className="text-xl font-semibold">{modalNote.title}</span>
-            {user?.profile.sub === modalNote.userId && (
+            {(user?.roles.includes("admin") || user?.profile.sub === modalNote.userId) && (
               <>
                 <Button
                   isIconOnly

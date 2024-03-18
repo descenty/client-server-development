@@ -57,8 +57,13 @@ export class NoteController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: UUID, @Body() createNoteDto: CreateNoteDto) {
-    return await this.noteService.update(id, createNoteDto);
+  @UseGuards(AuthGuard)
+  async update(
+    @Param('id') id: UUID,
+    @Body() createNoteDto: CreateNoteDto,
+    @User() user: UserDto,
+  ) {
+    return await this.noteService.update(id, user, createNoteDto);
   }
 
   @Delete(':id')
@@ -68,6 +73,6 @@ export class NoteController {
     @Param('id') id: UUID,
     @User() user: UserDto,
   ): Promise<DeleteResult> {
-    return await this.noteService.delete(id, user.id);
+    return await this.noteService.delete(id, user);
   }
 }

@@ -6,6 +6,8 @@ import { UUID } from 'crypto';
 import { CreateNoteDto } from './dto/createNote.dto';
 import { UserNotesDto } from './dto/userNotes.dto';
 import { UserService } from 'src/user/user.service';
+import { UserDto } from 'src/auth/dto/user.dto';
+import { Role } from 'src/auth/role.enum';
 
 @Injectable()
 export class NoteService {
@@ -70,11 +72,19 @@ export class NoteService {
     return await this.repository.findOneBy({ id });
   }
 
-  async update(id: UUID, createNoteDto: CreateNoteDto): Promise<UpdateResult> {
-    return await this.repository.update({ id }, createNoteDto);
+  async update(
+    id: UUID,
+    user: UserDto,
+    createNoteDto: CreateNoteDto,
+  ): Promise<UpdateResult> {
+    if (user.roles.includes(Role.Admin))
+      return await this.repository.update({ id }, createNoteDto);
+    return await this.repository.update({ id, userId: user.id }, createNoteDto);
   }
 
-  async delete(id: UUID, userId: UUID): Promise<DeleteResult> {
-    return await this.repository.delete({ id, userId });
+  async delete(id: UUID, user: UserDto): Promise<DeleteResult> {
+    if (user.roles.includes(Role.Admin))
+      return await this.repository.delete({ id });
+    return await this.repository.delete({ id, userId: user.id });
   }
 }
